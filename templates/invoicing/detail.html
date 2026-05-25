@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Invoice {{ invoice.invoice_number }}</h2>
+<p>Client: {{ invoice.client.name }}</p>
+<p>Amount: {{ invoice.amount }}</p>
+<p>Tax: {{ invoice.tax }}</p>
+<p>Total: {{ invoice.total_amount }}</p>
+<p>Issue Date: {{ invoice.issue_date }}</p>
+<p>Due Date: {{ invoice.due_date }}</p>
+<p>Status: {{ invoice.status }}</p>
+<p>Notes: {{ invoice.notes }}</p>
+<a href="{% url 'invoicing:edit' invoice.id %}">Edit</a>
+{% endblock %}

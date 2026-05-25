@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Task Assignment | SAIFI'S ERP</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fb 0%, #eef2f8 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Animated Background Pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle at 25% 40%, rgba(102, 126, 234, 0.03) 0%, transparent 50%),
+                              radial-gradient(circle at 75% 60%, rgba(118, 75, 162, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ========== SIDEBAR ========== */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100%;
+            background: linear-gradient(180deg, #0f172a 0%, #1a1f35 100%);
+            backdrop-filter: blur(10px);
+            box-shadow: 8px 0 30px rgba(0,0,0,0.12);
+            z-index: 100;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-right: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .sidebar-header {
+            padding: 32px 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-header h2 {
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #ffffff, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .sidebar-header h2 span {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            margin-left: 8px;
+            color: white;
+            background-clip: unset;
+            -webkit-background-clip: unset;
+        }
+
+        .sidebar-nav {
+            padding: 10px 0;
+        }
+
+        .nav-item {
+            padding: 12px 22px;
+            margin: 6px 16px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            color: #94a3b8;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 0;
+            height: 100%;
+            background: rgba(102, 126, 234, 0.15);
+            transition: width 0.3s ease;
+            z-index: -1;
+        }
+
+        .nav-item:hover::before {
+            width: 100%;
+        }
+
+        .nav-item i {
+            width: 24px;
+            font-size: 18px;
+            transition: transform 0.2s;
+        }
+
+        .nav-item:hover {
+            color: white;
+            transform: translateX(6px);
+        }
+
+        .nav-item:hover i {
+            transform: scale(1.1);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(102,126,234,0.2), rgba(118,75,162,0.2));
+            color: white;
+            border: 1px solid rgba(102,126,234,0.3);
+            box-shadow: 0 4px 15px rgba(102,126,234,0.2);
+        }
+
+        .nav-item.active i {
+            color: #a78bfa;
+        }
+
+        /* ========== MAIN CONTENT ========== */
+        .main-content {
+            margin-left: 280px;
+            padding: 25px 35px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ========== TOP BAR ========== */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(10px);
+            padding: 18px 28px;
+            border-radius: 24px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+
+        .page-title h1 {
+            font-size: 26px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e293b, #4f46e5);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+        }
+
+        .page-title h1 i {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-right: 8px;
+        }
+
+        .page-title p {
+            color: #64748b;
+            font-size: 14px;
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+            box-shadow: 0 6px 15px rgba(102,126,234,0.4);
+            transition: all 0.3s;
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.05);
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            padding: 10px 22px;
+            border-radius: 40px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(220,38,38,0.4);
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 10px 22px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102,126,234,0.4);
+        }
+
+        /* ========== STATS GRID ========== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 28px;
+            padding: 0;
+            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transition: transform 0.4s;
+        }
+
+        .stat-card:hover::after {
+            transform: scaleX(1);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.2);
+        }
+
+        .stat-inner {
+            padding: 24px 20px;
+            text-align: center;
+        }
+
+        .stat-icon {
+            width: 65px;
+            height: 65px;
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 18px;
+            font-size: 28px;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover .stat-icon {
+            transform: scale(1.05) rotate(3deg);
+        }
+
+        .stat-card.purple .stat-icon { background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; box-shadow: 0 10px 25px rgba(139,92,246,0.3); }
+        .stat-card.blue .stat-icon { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; box-shadow: 0 10px 25px rgba(59,130,246,0.3); }
+        .stat-card.green .stat-icon { background: linear-gradient(135deg, #10b981, #059669); color: white; box-shadow: 0 10px 25px rgba(16,185,129,0.3); }
+
+        .stat-number {
+            font-size: 38px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e293b, #475569);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 6px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #64748b;
+        }
+
+        /* ========== MAIN CARD ========== */
+        .main-card {
+            background: white;
+            border-radius: 28px;
+            overflow: hidden;
+            margin-bottom: 35px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+            transition: all 0.3s;
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .main-card:hover {
+            box-shadow: 0 20px 40px -12px rgba(0,0,0,0.12);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 22px 28px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 200px;
+            height: 200px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+        }
+
+        .card-header h2 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-header h2 i {
+            margin-right: 10px;
+        }
+
+        .card-header p {
+            margin: 8px 0 0;
+            opacity: 0.9;
+            font-size: 13px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ========== USERS GRID ========== */
+        .users-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 25px;
+            padding: 28px;
+        }
+
+        .user-card {
+            background: white;
+            border: 1px solid rgba(102,126,234,0.1);
+            border-radius: 24px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            text-decoration: none;
+            display: block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transition: transform 0.4s;
+        }
+
+        .user-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .user-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px -12px rgba(102,126,234,0.25);
+            border-color: rgba(102,126,234,0.3);
+        }
+
+        .user-card.selected {
+            border: 2px solid #667eea;
+            background: linear-gradient(135deg, #f8fafc, #ffffff);
+            box-shadow: 0 15px 35px -12px rgba(102,126,234,0.3);
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 18px;
+            font-size: 32px;
+            color: white;
+            box-shadow: 0 12px 25px rgba(102,126,234,0.35);
+            transition: all 0.3s;
+        }
+
+        .user-card:hover .user-avatar {
+            transform: scale(1.05);
+            border-radius: 20px;
+        }
+
+        .user-name {
+            font-size: 19px;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 6px;
+        }
+
+        .user-email {
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 18px;
+            word-break: break-all;
+        }
+
+        /* Task Stats */
+        .task-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 18px 0;
+            padding: 15px 0;
+            border-top: 1px solid #eef2ff;
+            border-bottom: 1px solid #eef2ff;
+            background: #fafcff;
+            border-radius: 16px;
+        }
+
+        .task-stat {
+            text-align: center;
+        }
+
+        .task-stat-number {
+            font-size: 26px;
+            font-weight: 800;
+            display: block;
+            transition: all 0.2s;
+        }
+
+        .task-stat-label {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .task-stat.pending .task-stat-number { color: #f59e0b; }
+        .task-stat.progress .task-stat-number { color: #3b82f6; }
+        .task-stat.completed .task-stat-number { color: #10b981; }
+
+        .total-tasks {
+            margin-top: 15px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #667eea;
+            padding: 8px;
+            background: #f0f4ff;
+            border-radius: 40px;
+        }
+
+        /* ========== TASKS TABLE ========== */
+        .table-responsive {
+            overflow-x: auto;
+            padding: 0;
+        }
+
+        .tasks-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .tasks-table th {
+            background: #f8fafc;
+            padding: 16px 22px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 700;
+            color: #1e293b;
+            border-bottom: 2px solid #e2e8f0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tasks-table td {
+            padding: 16px 22px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 14px;
+            color: #334155;
+        }
+
+        .tasks-table tbody tr {
+            transition: all 0.2s;
+        }
+
+        .tasks-table tbody tr:hover {
+            background: linear-gradient(90deg, #f8fafc, #ffffff);
+            transform: scale(1.01);
+        }
+
+        /* Badges */
+        .badge { 
+            padding: 5px 14px; 
+            border-radius: 30px; 
+            font-size: 12px; 
+            font-weight: 600; 
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .badge-pending { background: #fef3c7; color: #d97706; }
+        .badge-progress { background: #dbeafe; color: #2563eb; }
+        .badge-completed { background: #d1fae5; color: #059669; }
+        .badge-high { background: #fee2e2; color: #dc2626; }
+        .badge-medium { background: #fef3c7; color: #d97706; }
+        .badge-low { background: #d1fae5; color: #059669; }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 70px 40px;
+            color: #64748b;
+        }
+
+        .empty-state i {
+            font-size: 70px;
+            margin-bottom: 20px;
+            opacity: 0.4;
+        }
+
+        .empty-state h3 {
+            margin-top: 15px;
+            color: #1e293b;
+        }
+
+        /* Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .main-card, .stat-card, .user-card {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 18px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .users-grid {
+                grid-template-columns: 1fr;
+            }
+            .top-bar {
+                flex-direction: column;
+                text-align: center;
+                gap: 18px;
+            }
+            .user-info {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .tasks-table th, .tasks-table td {
+                padding: 12px 15px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>SAIFI'S <span>ERP</span></h2>
+        </div>
+        <div class="sidebar-nav">
+            <a href="/" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="{% url 'all_users_list' %}" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Users</span>
+            </a>
+            <a href="{% url 'all_clients' %}" class="nav-item">
+                <i class="fas fa-user-tie"></i>
+                <span>Clients</span>
+            </a>
+            <a href="{% url 'active_campaigns_list' %}" class="nav-item">
+                <i class="fas fa-bullhorn"></i>
+                <span>Campaigns</span>
+            </a>
+            <a href="{% url 'pending_tasks_list' %}" class="nav-item">
+                <i class="fas fa-tasks"></i>
+                <span>Tasks</span>
+            </a>
+            <a href="{% url 'task_assignment' %}" class="nav-item active">
+                <i class="fas fa-user-check"></i>
+                <span>Assignments</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="page-title">
+                <h1><i class="fas fa-user-check"></i> Task Assignments</h1>
+                <p>View and manage team member task assignments</p>
+            </div>
+            <div class="user-info">
+                
+                <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </form>
+                <a href="/" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card purple">
+                <div class="stat-inner">
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                    <div class="stat-number">{{ users.count }}</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+            </div>
+            <div class="stat-card blue">
+                <div class="stat-inner">
+                    <div class="stat-icon"><i class="fas fa-user-check"></i></div>
+                    <div class="stat-number">{{ users|length }}</div>
+                    <div class="stat-label">Users with Tasks</div>
+                </div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-inner">
+                    <div class="stat-icon"><i class="fas fa-tasks"></i></div>
+                    <div class="stat-number">{{ total_assigned_tasks }}</div>
+                    <div class="stat-label">Total Assigned Tasks</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Team Members Grid -->
+        <div class="main-card">
+            <div class="card-header">
+                <h2><i class="fas fa-users"></i> Team Members</h2>
+                <p>Click on any team member to view their assigned tasks</p>
+            </div>
+            <div class="users-grid">
+                {% for u in users %}
+                <a href="?user_id={{ u.id }}" class="user-card {% if selected_user and selected_user.id == u.id %}selected{% endif %}">
+                    <div class="user-avatar">
+                        {{ u.username|make_list|first|upper }}
+                    </div>
+                    <div class="user-name">{{ u.username }}</div>
+                    <div class="user-email">{{ u.email }}</div>
+                    <div class="task-stats">
+                        <div class="task-stat pending">
+                            <span class="task-stat-number">{{ u.pending_count }}</span>
+                            <span class="task-stat-label">Pending</span>
+                        </div>
+                        <div class="task-stat progress">
+                            <span class="task-stat-number">{{ u.in_progress_count }}</span>
+                            <span class="task-stat-label">Progress</span>
+                        </div>
+                        <div class="task-stat completed">
+                            <span class="task-stat-number">{{ u.completed_count }}</span>
+                            <span class="task-stat-label">Completed</span>
+                        </div>
+                    </div>
+                    <div class="total-tasks">
+                        <i class="fas fa-tasks"></i> Total: {{ u.total_tasks }} tasks
+                    </div>
+                </a>
+                {% empty %}
+                <div class="empty-state" style="grid-column: 1/-1;">
+                    <i class="fas fa-inbox"></i>
+                    <p>No users with assigned tasks found.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Selected User Tasks -->
+        {% if selected_user and user_tasks %}
+        <div class="main-card">
+            <div class="card-header">
+                <h2><i class="fas fa-tasks"></i> Tasks: {{ selected_user.username }}</h2>
+                <p>{{ user_tasks|length }} tasks assigned to this team member</p>
+            </div>
+            <div class="table-responsive">
+                <table class="tasks-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Task Title</th>
+                            <th>Campaign</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Due Date</th>
+                        </thead>
+                    <tbody>
+                        {% for task in user_tasks %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td><strong>{{ task.title }}</strong></td>
+                            <td>{{ task.campaign.name }}</td>
+                            <td>
+                                <span class="badge {% if task.priority == 'high' %}badge-high{% elif task.priority == 'medium' %}badge-medium{% else %}badge-low{% endif %}">
+                                    <i class="fas {% if task.priority == 'high' %}fa-arrow-up{% elif task.priority == 'medium' %}fa-minus{% else %}fa-arrow-down{% endif %}"></i>
+                                    {{ task.priority }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if task.status == 'pending' %}
+                                <span class="badge badge-pending"><i class="fas fa-clock"></i> Pending</span>
+                                {% elif task.status == 'in_progress' %}
+                                <span class="badge badge-progress"><i class="fas fa-spinner fa-pulse"></i> In Progress</span>
+                                {% else %}
+                                <span class="badge badge-completed"><i class="fas fa-check-circle"></i> Completed</span>
+                                {% endif %}
+                            </td>
+                            <td><i class="fas fa-calendar-alt"></i> {{ task.due_date }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% elif selected_user %}
+        <div class="main-card">
+            <div class="empty-state">
+                <i class="fas fa-check-circle" style="color: #10b981; font-size: 60px;"></i>
+                <h3 style="margin-top: 18px;">No Tasks Assigned</h3>
+                <p>{{ selected_user.username }} doesn't have any tasks yet.</p>
+                <a href="/admin/tasks/task/add/" class="back-btn" style="display: inline-block; margin-top: 20px;">
+                    <i class="fas fa-plus"></i> Add Task
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

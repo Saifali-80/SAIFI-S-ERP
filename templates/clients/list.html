@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Clients{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>👥 Clients</h1>
+        <a href="{% url 'clients:add' %}" class="btn btn-primary">+ Add Client</a>
+    </div>
+    
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Company</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for client in clients %}
+                    <tr>
+                        <td><a href="{% url 'clients:detail' client.id %}">{{ client.name }}</a></td>
+                        <td>{{ client.email }}</td>
+                        <td>{{ client.phone }}</td>
+                        <td>{{ client.company }}</td>
+                        <td>
+                            <span class="badge bg-{% if client.status == 'active' %}success{% elif client.status == 'inactive' %}danger{% else %}warning{% endif %}">
+                                {{ client.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{% url 'clients:edit' client.id %}" class="btn btn-sm btn-warning">Edit</a>
+                            <a href="{% url 'clients:delete' client.id %}" class="btn btn-sm btn-danger">Delete</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">No clients yet. <a href="{% url 'clients:add' %}">Add your first client</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

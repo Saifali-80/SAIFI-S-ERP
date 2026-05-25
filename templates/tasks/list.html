@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Tasks</h2>
+<a href="{% url 'tasks:add' %}" class="btn btn-primary">Add Task</a>
+<table class="table">
+    <tr><th>Title</th><th>Campaign</th><th>Priority</th><th>Status</th><th>Due Date</th><th>Actions</th></tr>
+    {% for task in tasks %}
+    <tr>
+        <td>{{ task.title }}</td>
+        <td>{{ task.campaign.name }}</td>
+        <td>{{ task.priority }}</td>
+        <td>{{ task.status }}</td>
+        <td>{{ task.due_date }}</td>
+        <td>
+            <a href="{% url 'tasks:edit' task.id %}">Edit</a>
+            <a href="{% url 'tasks:delete' task.id %}">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}{% if client %}Edit{% else %}Add{% endif %} Client{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2>{% if client %}Edit{% else %}Add New{% endif %} Client</h2>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label class="form-label">Name</label>
+                    <input type="text" name="name" class="form-control" value="{{ client.name|default:'' }}" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control" value="{{ client.email|default:'' }}" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Phone</label>
+                    <input type="text" name="phone" class="form-control" value="{{ client.phone|default:'' }}" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Company</label>
+                    <input type="text" name="company" class="form-control" value="{{ client.company|default:'' }}">
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Address</label>
+                    <textarea name="address" class="form-control" rows="3">{{ client.address|default:'' }}</textarea>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-control">
+                        <option value="active" {% if client.status == 'active' %}selected{% endif %}>Active</option>
+                        <option value="inactive" {% if client.status == 'inactive' %}selected{% endif %}>Inactive</option>
+                        <option value="lead" {% if client.status == 'lead' %}selected{% endif %}>Lead</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Save Client</button>
+                <a href="{% url 'clients:list' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

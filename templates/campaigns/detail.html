@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}{{ campaign.name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h2>{{ campaign.name }}</h2>
+            <div>
+                <a href="{% url 'campaigns:edit' campaign.id %}" class="btn btn-warning">Edit</a>
+                <a href="{% url 'campaigns:delete' campaign.id %}" class="btn btn-danger">Delete</a>
+                <a href="{% url 'campaigns:list' %}" class="btn btn-secondary">Back</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <p><strong>Client:</strong> {{ campaign.client.name }}</p>
+            <p><strong>Type:</strong> {{ campaign.get_campaign_type_display }}</p>
+            <p><strong>Status:</strong> {{ campaign.get_status_display }}</p>
+            <p><strong>Budget:</strong> ${{ campaign.budget }}</p>
+            <p><strong>Start Date:</strong> {{ campaign.start_date }}</p>
+            <p><strong>End Date:</strong> {{ campaign.end_date|default:"Not set" }}</p>
+            <p><strong>Description:</strong> {{ campaign.description|default:"No description" }}</p>
+            <p><strong>Created:</strong> {{ campaign.created_at }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

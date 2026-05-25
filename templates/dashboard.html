@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | SAIFI'S ERP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fb 0%, #eef2f8 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Animated Background Pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle at 25% 40%, rgba(102, 126, 234, 0.03) 0%, transparent 50%),
+                              radial-gradient(circle at 75% 60%, rgba(118, 75, 162, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ========== PREMIUM SIDEBAR ========== */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100%;
+            background: linear-gradient(180deg, #0f172a 0%, #1a1f35 100%);
+            backdrop-filter: blur(10px);
+            box-shadow: 8px 0 30px rgba(0,0,0,0.12);
+            z-index: 100;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-right: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .sidebar-header {
+            padding: 32px 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-header h2 {
+            color: white;
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #ffffff, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .sidebar-header h2 span {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            margin-left: 8px;
+            color: white;
+            background-clip: unset;
+            -webkit-background-clip: unset;
+        }
+
+        .sidebar-nav {
+            padding: 10px 0;
+        }
+
+        .nav-item {
+            padding: 12px 22px;
+            margin: 6px 16px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            color: #94a3b8;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 0;
+            height: 100%;
+            background: rgba(102, 126, 234, 0.15);
+            transition: width 0.3s ease;
+            z-index: -1;
+        }
+
+        .nav-item:hover::before {
+            width: 100%;
+        }
+
+        .nav-item i {
+            width: 24px;
+            font-size: 18px;
+            transition: transform 0.2s;
+        }
+
+        .nav-item:hover {
+            color: white;
+            transform: translateX(6px);
+        }
+
+        .nav-item:hover i {
+            transform: scale(1.1);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(102,126,234,0.2), rgba(118,75,162,0.2));
+            color: white;
+            border: 1px solid rgba(102,126,234,0.3);
+            box-shadow: 0 4px 15px rgba(102,126,234,0.2);
+        }
+
+        .nav-item.active i {
+            color: #a78bfa;
+        }
+
+        /* ========== MAIN CONTENT ========== */
+        .main-content {
+            margin-left: 280px;
+            padding: 25px 35px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ========== TOP BAR - PREMIUM ========== */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            padding: 18px 28px;
+            border-radius: 28px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255,255,255,0.5);
+            transition: all 0.3s;
+        }
+
+        .top-bar:hover {
+            box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+        }
+
+        .page-title h1 {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e293b, #4f46e5);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+        }
+
+        .page-title p {
+            color: #64748b;
+            font-size: 14px;
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+            box-shadow: 0 6px 15px rgba(102,126,234,0.4);
+            transition: all 0.3s;
+        }
+
+        .user-avatar:hover {
+            transform: scale(1.05);
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            padding: 10px 22px;
+            border-radius: 40px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(220,38,38,0.4);
+        }
+
+        /* ========== STATS CARDS - PREMIUM ========== */
+        .stats-row {
+            margin-bottom: 35px;
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 28px;
+            padding: 0;
+            transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transition: transform 0.4s;
+        }
+
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.2);
+        }
+
+        .card-inner {
+            padding: 24px 22px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-header-icon {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            width: 58px;
+            height: 58px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover .card-icon {
+            transform: scale(1.05) rotate(3deg);
+        }
+
+        .stat-number {
+            font-size: 38px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 6px;
+            background: linear-gradient(135deg, #1e293b, #475569);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #64748b;
+        }
+
+        .card-footer-info {
+            margin-top: 15px;
+            padding-top: 12px;
+            border-top: 2px solid rgba(102,126,234,0.08);
+            font-size: 12px;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .stat-card.purple .card-icon { background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; box-shadow: 0 8px 20px rgba(139,92,246,0.3); }
+        .stat-card.blue .card-icon { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; box-shadow: 0 8px 20px rgba(59,130,246,0.3); }
+        .stat-card.green .card-icon { background: linear-gradient(135deg, #10b981, #059669); color: white; box-shadow: 0 8px 20px rgba(16,185,129,0.3); }
+        .stat-card.orange .card-icon { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; box-shadow: 0 8px 20px rgba(245,158,11,0.3); }
+        .stat-card.teal .card-icon { background: linear-gradient(135deg, #14b8a6, #0d9488); color: white; box-shadow: 0 8px 20px rgba(20,184,166,0.3); }
+
+        /* ========== CHARTS SECTION - PREMIUM ========== */
+        .charts-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 28px;
+            padding: 25px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .chart-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.12);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(102,126,234,0.1);
+        }
+
+        .chart-header h4 {
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b, #4f46e5);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .chart-header h4 i {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-right: 8px;
+        }
+
+        .filter-select {
+            padding: 8px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            font-size: 12px;
+            background: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-select:hover {
+            border-color: #667eea;
+        }
+
+        canvas {
+            max-height: 260px;
+            width: 100%;
+        }
+
+        /* ========== QUICK ACTIONS ========== */
+        .quick-actions {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 35px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 26px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .action-btn:hover::before {
+            left: 100%;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102,126,234,0.4);
+        }
+
+        /* ========== RECENT ITEMS - PREMIUM ========== */
+        .recent-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .recent-card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .recent-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.12);
+        }
+
+        .recent-header {
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            padding: 16px 22px;
+            font-weight: 700;
+            font-size: 15px;
+            border-bottom: 2px solid rgba(102,126,234,0.1);
+            color: #1e293b;
+        }
+
+        .recent-header i {
+            color: #667eea;
+            margin-right: 10px;
+        }
+
+        .recent-item {
+            padding: 14px 22px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .recent-item:hover {
+            background: #f8fafc;
+            transform: translateX(5px);
+        }
+
+        .recent-item span {
+            font-weight: 500;
+            color: #334155;
+        }
+
+        .recent-item small {
+            color: #94a3b8;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* ========== ANIMATIONS ========== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-card, .chart-card, .recent-card, .action-btn {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+            .recent-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            .top-bar {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            .quick-actions {
+                justify-content: center;
+            }
+            .page-title h1 {
+                font-size: 24px;
+            }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #5a67d8, #6b46c0);
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>SAIFI'S <span>ERP</span></h2>
+        </div>
+        <div class="sidebar-nav">
+            <a href="/" class="nav-item active">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="{% url 'all_users_list' %}" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Users</span>
+            </a>
+            <a href="{% url 'all_clients' %}" class="nav-item">
+                <i class="fas fa-user-tie"></i>
+                <span>Clients</span>
+            </a>
+            <a href="{% url 'active_campaigns_list' %}" class="nav-item">
+                <i class="fas fa-bullhorn"></i>
+                <span>Campaigns</span>
+            </a>
+            <a href="{% url 'pending_tasks_list' %}" class="nav-item">
+                <i class="fas fa-tasks"></i>
+                <span>Tasks</span>
+            </a>
+            <a href="{% url 'task_assignment' %}" class="nav-item">
+                <i class="fas fa-user-check"></i>
+                <span>Assignments</span>
+                
+            </a>
+
+            <a href="{% url 'all_invoices_list' %}" class="nav-item">
+                <i class="fas fa-file-invoice-dollar"></i>
+                <span>Invoices</span>
+             </a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="top-bar">
+            <div class="page-title">
+                <h1><i class="fas fa-chart-line"></i> Dashboard</h1>
+                <p>Welcome back, <strong style="color: #667eea;">{{ user.username }}</strong>! Here's your agency performance at a glance.</p>
+            </div>
+            <div class="user-info">
+                
+                <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Stats Cards Row 1 -->
+        <div class="stats-row">
+            <div class="stats-grid">
+                <a href="{% url 'all_users_list' %}" class="stat-card purple">
+                    <div class="card-inner">
+                        <div class="card-header-icon">
+                            <div class="card-icon"><i class="fas fa-users"></i></div>
+                        </div>
+                        <div class="stat-number">{{ total_users }}</div>
+                        <div class="stat-label">Total Users</div>
+                        <div class="card-footer-info">
+                            <i class="fas fa-user-check"></i>
+                            <span>Active accounts</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="{% url 'all_clients' %}" class="stat-card blue">
+                    <div class="card-inner">
+                        <div class="card-header-icon">
+                            <div class="card-icon"><i class="fas fa-building"></i></div>
+                        </div>
+                        <div class="stat-number">{{ total_clients }}</div>
+                        <div class="stat-label">Total Clients</div>
+                        <div class="card-footer-info">
+                            <i class="fas fa-user-tie"></i>
+                            <span>Active clients</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="{% url 'active_campaigns_list' %}" class="stat-card green">
+                    <div class="card-inner">
+                        <div class="card-header-icon">
+                            <div class="card-icon"><i class="fas fa-bullhorn"></i></div>
+                        </div>
+                        <div class="stat-number">{{ active_campaigns }}</div>
+                        <div class="stat-label">Active Campaigns</div>
+                        <div class="card-footer-info">
+                            <i class="fas fa-play"></i>
+                            <span>Running campaigns</span>
+                        </div>
+                    </div>
+                </a>
+                <div class="stat-card teal">
+                    <div class="card-inner">
+                        <div class="card-header-icon">
+                            <div class="card-icon"><i class="fas fa-dollar-sign"></i></div>
+                        </div>
+                        <div class="stat-number">${{ total_revenue|floatformat:2 }}</div>
+                        <div class="stat-label">Total Revenue</div>
+                        <div class="card-footer-info">
+                            <i class="fas fa-chart-line"></i>
+                            <span>From paid invoices</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards Row 2 -->
+        <div class="stats-row">
+            <div class="stats-grid">
+                <a href="{% url 'pending_tasks_list' %}" class="stat-card orange">
+                    <div class="card-inner">
+                        <div class="card-header-icon">
+                            <div class="card-icon"><i class="fas fa-clock"></i></div>
+                        </div>
+                        <div class="stat-number">{{ pending_tasks }}</div>
+                        <div class="stat-label">Pending Tasks</div>
+                        <div class="card-footer-info">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span>Need attention</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="{% url 'in_progress_tasks_list' %}" class="stat-card blue">
+                    <div class="card-inner">
+                        <div class="card-header-icon">
+                            <div class="card-icon"><i class="fas fa-spinner fa-pulse"></i></div>
+                        </div>
+                        <div class="stat-number">{{ in_progress_tasks }}</div>
+                        <div class="stat-label">In Progress</div>
+                        <div class="card-footer-info">
+                            <i class="fas fa-sync-alt"></i>
+                            <span>Working on these</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="{% url 'completed_tasks_list' %}" class="stat-card green">
+                    <div class="card-inner">
+                        <div class="card-header-icon">
+                            <div class="card-icon"><i class="fas fa-check-circle"></i></div>
+                        </div>
+                        <div class="stat-number">{{ completed_tasks }}</div>
+                        <div class="stat-label">Completed</div>
+                        <div class="card-footer-info">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Successfully done</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="{% url 'task_assignment' %}" class="stat-card purple">
+                    <div class="card-inner">
+                        <div class="card-header-icon">
+                            <div class="card-icon"><i class="fas fa-user-check"></i></div>
+                        </div>
+                        <div class="stat-number">{{ users_with_tasks }}</div>
+                        <div class="stat-label">Users with Tasks</div>
+                        <div class="card-footer-info">
+                            <i class="fas fa-tasks"></i>
+                            <span>{{ total_assigned_tasks }} tasks assigned</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+<div class="charts-section">
+    <div class="chart-card">
+        <div class="chart-header">
+            <h4><i class="fas fa-chart-line"></i> Monthly Revenue</h4>
+            <form method="get" action="" style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                <select name="filter_type" id="filter_type" onchange="toggleDateRange()" class="filter-select">
+                    <option value="last6" {% if filter_type == 'last6' %}selected{% endif %}>Last 6 Months</option>
+                    <option value="year" {% if filter_type == 'year' %}selected{% endif %}>Full Year</option>
+                    <option value="custom" {% if filter_type == 'custom' %}selected{% endif %}>Custom Range</option>
+                    <option value="all" {% if filter_type == 'all' %}selected{% endif %}>All Time</option>
+                </select>
+
+                <select name="year" id="year_select" class="filter-select" style="{% if filter_type == 'custom' %}display:none;{% endif %}">
+                    {% for y in years %}
+                    <option value="{{ y }}" {% if selected_year == y %}selected{% endif %}>{{ y }}</option>
+                    {% endfor %}
+                </select>
+
+                <!-- Custom Range Date Pickers (Calendar) -->
+                <div id="custom_date_range" style="display: {% if filter_type == 'custom' %}flex{% else %}none{% endif %}; gap: 8px; align-items: center;">
+                    <input type="date" name="start_date" id="start_date" class="filter-select" value="{{ start_date|default:'' }}" placeholder="Start Date" style="padding: 6px 12px;">
+                    <span>to</span>
+                    <input type="date" name="end_date" id="end_date" class="filter-select" value="{{ end_date|default:'' }}" placeholder="End Date" style="padding: 6px 12px;">
+                </div>
+
+                <button type="submit" class="filter-select" style="background: #667eea; color: white; border: none; cursor: pointer;">Apply</button>
+                <a href="{% url 'dashboard' %}" class="filter-select" style="background: #64748b; color: white; text-decoration: none; padding: 6px 12px; border-radius: 10px;">Reset</a>
+            </form>
+        </div>
+        <canvas id="revenueChart"></canvas>
+    </div>
+    <div class="chart-card">
+        <div class="chart-header">
+            <h4><i class="fas fa-chart-pie"></i> Campaign Performance</h4>
+        </div>
+        <canvas id="campaignChart"></canvas>
+    </div>
+</div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <a href="{% url 'clients:add' %}" class="action-btn"><i class="fas fa-plus"></i> New Client</a>
+            <a href="{% url 'campaigns:add' %}" class="action-btn"><i class="fas fa-plus"></i> New Campaign</a>
+            <a href="{% url 'tasks:add' %}" class="action-btn"><i class="fas fa-plus"></i> New Task</a>
+            <a href="{% url 'invoicing:add' %}" class="action-btn"><i class="fas fa-plus"></i> New Invoice</a>
+        </div>
+
+        <!-- Recent Items -->
+        <div class="recent-grid">
+            <div class="recent-card">
+                <div class="recent-header"><i class="fas fa-users"></i> Recent Clients</div>
+                {% for client in recent_clients %}
+                <div class="recent-item">
+                    <span>{{ client.name }}</span>
+                    <small>{{ client.created_at|date:"d M Y" }}</small>
+                </div>
+                {% empty %}
+                <div class="recent-item">No clients yet</div>
+                {% endfor %}
+            </div>
+            <div class="recent-card">
+                <div class="recent-header"><i class="fas fa-bullhorn"></i> Active Campaigns</div>
+                {% for camp in recent_campaigns %}
+                <div class="recent-item">
+                    <span>{{ camp.name }}</span>
+                    <small>{{ camp.get_campaign_type_display }}</small>
+                </div>
+                {% empty %}
+                <div class="recent-item">No active campaigns</div>
+                {% endfor %}
+            </div>
+            <div class="recent-card">
+                <div class="recent-header"><i class="fas fa-file-invoice"></i> Recent Invoices</div>
+                {% for inv in recent_invoices %}
+                <div class="recent-item">
+                    <span>{{ inv.invoice_number }}</span>
+                    <small>${{ inv.total_amount }}</small>
+                </div>
+                {% empty %}
+                <div class="recent-item">No invoices yet</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+        new Chart(revenueCtx, {
+            type: 'line',
+            data: {
+                labels: {{ revenue_labels|safe }},
+                datasets: [{
+                    label: 'Revenue ($)',
+                    data: {{ revenue_data|safe }},
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102,126,234,0.05)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#667eea',
+                    pointBorderColor: '#fff',
+                    pointRadius: 5,
+                    pointHoverRadius: 8,
+                    pointHoverBackgroundColor: '#764ba2'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: { 
+                    tooltip: { 
+                        callbacks: { 
+                            label: (ctx) => '$' + ctx.raw.toLocaleString() 
+                        },
+                        backgroundColor: '#1e293b',
+                        titleColor: '#fff',
+                        bodyColor: '#94a3b8'
+                    } 
+                },
+                scales: { 
+                    y: { 
+                        beginAtZero: true, 
+                        ticks: { 
+                            callback: (v) => '$' + v,
+                            stepSize: 1000
+                        },
+                        grid: {
+                            color: '#e2e8f0'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+
+        const campaignCtx = document.getElementById('campaignChart').getContext('2d');
+        new Chart(campaignCtx, {
+            type: 'doughnut',
+            data: {
+                labels: {{ campaign_labels|safe }},
+                datasets: [{
+                    data: {{ campaign_data|safe }},
+                    backgroundColor: ['#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ef4444'],
+                    borderWidth: 0,
+                    hoverOffset: 10
+                }]
+            },
+            options: { 
+                responsive: true, 
+                plugins: { 
+                    legend: { 
+                        position: 'bottom',
+                        labels: {
+                            font: { size: 12, family: 'Inter' },
+                            padding: 15,
+                            usePointStyle: true,
+                            pointStyle: 'circle'
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: '#1e293b',
+                        titleColor: '#fff',
+                        bodyColor: '#94a3b8'
+                    }
+                } 
+            }
+        });
+    </script>
+
+
+
+   <script>
+    function toggleDateRange() {
+        const filterType = document.getElementById('filter_type').value;
+        const customRangeDiv = document.getElementById('custom_date_range');
+        const yearSelect = document.getElementById('year_select');
+        
+        if (filterType === 'custom') {
+            customRangeDiv.style.display = 'flex';
+            yearSelect.style.display = 'none';
+        } else {
+            customRangeDiv.style.display = 'none';
+            yearSelect.style.display = 'block';
+        }
+    }
+    
+    // Call on page load to set initial state
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleDateRange();
+    });
+</script>
+</body>
+</html>

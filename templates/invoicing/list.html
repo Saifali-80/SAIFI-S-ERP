@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Invoices</h2>
+<a href="{% url 'invoicing:add' %}">Add Invoice</a>
+<table>
+    <tr><th>Number</th><th>Client</th><th>Amount</th><th>Total</th><th>Status</th><th>Due</th><th>Actions</th></tr>
+    {% for inv in invoices %}
+    <tr>
+        <td>{{ inv.invoice_number }}</td>
+        <td>{{ inv.client.name }}</td>
+        <td>{{ inv.amount }}</td>
+        <td>{{ inv.total_amount }}</td>
+        <td>{{ inv.status }}</td>
+        <td>{{ inv.due_date }}</td>
+        <td>
+            <a href="{% url 'invoicing:detail' inv.id %}">View</a>
+            <a href="{% url 'invoicing:edit' inv.id %}">Edit</a>
+            <a href="{% url 'invoicing:delete' inv.id %}">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

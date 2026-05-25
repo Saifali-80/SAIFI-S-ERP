@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}{{ client.name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h2>{{ client.name }}</h2>
+            <div>
+                <a href="{% url 'clients:edit' client.id %}" class="btn btn-warning">Edit</a>
+                <a href="{% url 'clients:delete' client.id %}" class="btn btn-danger">Delete</a>
+                <a href="{% url 'clients:list' %}" class="btn btn-secondary">Back</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <p><strong>Email:</strong> {{ client.email }}</p>
+            <p><strong>Phone:</strong> {{ client.phone }}</p>
+            <p><strong>Company:</strong> {{ client.company|default:"-" }}</p>
+            <p><strong>Address:</strong> {{ client.address|default:"-" }}</p>
+            <p><strong>Status:</strong> {{ client.get_status_display }}</p>
+            <p><strong>Created:</strong> {{ client.created_at }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

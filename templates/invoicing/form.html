@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>{% if invoice %}Edit{% else %}Add{% endif %} Invoice</h2>
+<form method="post">
+    {% csrf_token %}
+    Invoice Number: <input name="invoice_number" value="{{ invoice.invoice_number|default:'' }}"><br>
+    Client: <select name="client">
+        {% for c in clients %}
+        <option value="{{ c.id }}" {% if invoice.client.id == c.id %}selected{% endif %}>{{ c.name }}</option>
+        {% endfor %}
+    </select><br>
+    Amount: <input name="amount" value="{{ invoice.amount|default:'' }}"><br>
+    Tax: <input name="tax" value="{{ invoice.tax|default:0 }}"><br>
+    Issue Date: <input type="date" name="issue_date" value="{{ invoice.issue_date|date:'Y-m-d'|default:'' }}"><br>
+    Due Date: <input type="date" name="due_date" value="{{ invoice.due_date|date:'Y-m-d'|default:'' }}"><br>
+    Status: <select name="status">
+        <option value="draft" {% if invoice.status == 'draft' %}selected{% endif %}>Draft</option>
+        <option value="sent" {% if invoice.status == 'sent' %}selected{% endif %}>Sent</option>
+        <option value="paid" {% if invoice.status == 'paid' %}selected{% endif %}>Paid</option>
+        <option value="overdue" {% if invoice.status == 'overdue' %}selected{% endif %}>Overdue</option>
+    </select><br>
+    Notes: <textarea name="notes">{{ invoice.notes|default:'' }}</textarea><br>
+    <button type="submit">Save</button>
+</form>
+{% endblock %}

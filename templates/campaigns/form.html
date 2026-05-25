@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %}{% if campaign %}Edit{% else %}Add{% endif %} Campaign{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2>{% if campaign %}Edit{% else %}Add New{% endif %} Campaign</h2>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label class="form-label">Campaign Name</label>
+                    <input type="text" name="name" class="form-control" value="{{ campaign.name|default:'' }}" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Client</label>
+                    <select name="client" class="form-control" required>
+                        <option value="">Select Client</option>
+                        {% for client in clients %}
+                        <option value="{{ client.id }}" {% if campaign.client.id == client.id %}selected{% endif %}>
+                            {{ client.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Campaign Type</label>
+                    <select name="campaign_type" class="form-control" required>
+                        <option value="seo" {% if campaign.campaign_type == 'seo' %}selected{% endif %}>SEO</option>
+                        <option value="social" {% if campaign.campaign_type == 'social' %}selected{% endif %}>Social Media</option>
+                        <option value="email" {% if campaign.campaign_type == 'email' %}selected{% endif %}>Email Marketing</option>
+                        <option value="ppc" {% if campaign.campaign_type == 'ppc' %}selected{% endif %}>Google Ads/PPC</option>
+                        <option value="content" {% if campaign.campaign_type == 'content' %}selected{% endif %}>Content Marketing</option>
+                    </select>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-control">
+                        <option value="planning" {% if campaign.status == 'planning' %}selected{% endif %}>Planning</option>
+                        <option value="active" {% if campaign.status == 'active' %}selected{% endif %}>Active</option>
+                        <option value="completed" {% if campaign.status == 'completed' %}selected{% endif %}>Completed</option>
+                    </select>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Budget ($)</label>
+                    <input type="number" name="budget" class="form-control" value="{{ campaign.budget|default:0 }}" step="0.01">
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Start Date</label>
+                    <input type="date" name="start_date" class="form-control" value="{{ campaign.start_date|date:'Y-m-d'|default:'' }}" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">End Date (Optional)</label>
+                    <input type="date" name="end_date" class="form-control" value="{{ campaign.end_date|date:'Y-m-d'|default:'' }}">
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <textarea name="description" class="form-control" rows="4">{{ campaign.description|default:'' }}</textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Save Campaign</button>
+                <a href="{% url 'campaigns:list' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

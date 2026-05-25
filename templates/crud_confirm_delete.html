@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} | SAIFI'S ERP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fb 0%, #eef2f8 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle at 25% 40%, rgba(102, 126, 234, 0.03) 0%, transparent 50%),
+                              radial-gradient(circle at 75% 60%, rgba(118, 75, 162, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .delete-container {
+            max-width: 500px;
+            width: 90%;
+            background: white;
+            border-radius: 32px;
+            padding: 50px 40px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            position: relative;
+            z-index: 1;
+            animation: fadeInUp 0.5s ease;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .delete-icon {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            animation: pulse 0.5s ease;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .delete-icon i { font-size: 45px; color: #dc2626; }
+        .delete-container h2 { font-size: 28px; font-weight: 800; color: #1e293b; margin-bottom: 15px; }
+        .delete-message {
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #ef4444;
+        }
+        .delete-message p { color: #475569; font-size: 15px; line-height: 1.6; }
+        .delete-message strong {
+            color: #dc2626;
+            font-size: 16px;
+            display: block;
+            margin-top: 8px;
+            word-break: break-all;
+        }
+        .warning-text {
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: #fef3c7;
+            padding: 10px;
+            border-radius: 12px;
+        }
+        .warning-text i { color: #f59e0b; }
+        .delete-buttons { display: flex; gap: 15px; margin-top: 10px; }
+        .btn-confirm {
+            flex: 1;
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 16px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 15px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-confirm:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(220,38,38,0.4); }
+        .btn-cancel {
+            flex: 1;
+            background: #e2e8f0;
+            color: #475569;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 16px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: 700;
+            font-size: 15px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-cancel:hover { background: #cbd5e1; transform: translateY(-2px); }
+        @media (max-width: 640px) {
+            .delete-container { padding: 35px 25px; }
+            .delete-buttons { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="delete-container">
+        <div class="delete-icon"><i class="fas fa-exclamation-triangle"></i></div>
+        <h2>Confirm Delete</h2>
+        <div class="delete-message">
+            <p>Are you sure you want to delete this <strong style="color: #dc2626; display: inline;">{{ type|title }}</strong>?</p>
+            <strong><i class="fas fa-trash"></i> "{{ item }}"</strong>
+        </div>
+        <div class="warning-text">
+            <i class="fas fa-info-circle"></i>
+            <span>⚠️ This action cannot be undone. All related data will be permanently removed.</span>
+        </div>
+        <form method="post">
+            {% csrf_token %}
+            <div class="delete-buttons">
+                <button type="submit" class="btn-confirm"><i class="fas fa-trash-alt"></i> Yes, Delete Permanently</button>
+                {% if type == 'user' %}
+                <a href="{% url 'all_users_list' %}" class="btn-cancel"><i class="fas fa-times"></i> No, Cancel</a>
+                {% elif type == 'client' %}
+                <a href="{% url 'all_clients' %}" class="btn-cancel"><i class="fas fa-times"></i> No, Cancel</a>
+                {% elif type == 'campaign' %}
+                <a href="{% url 'active_campaigns_list' %}" class="btn-cancel"><i class="fas fa-times"></i> No, Cancel</a>
+                {% elif type == 'task' %}
+                <a href="{% url 'pending_tasks_list' %}" class="btn-cancel"><i class="fas fa-times"></i> No, Cancel</a>
+                {% elif type == 'invoice' %}
+                <a href="{% url 'all_invoices_list' %}" class="btn-cancel"><i class="fas fa-times"></i> No, Cancel</a>
+                {% else %}
+                <a href="/" class="btn-cancel"><i class="fas fa-times"></i> No, Cancel</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</body>
+</html>

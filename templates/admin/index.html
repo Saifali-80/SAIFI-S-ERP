@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Django Admin Dashboard</title>
+    <!-- Google Fonts & Font Awesome (already in extrastyle, but included for safety) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* ---------- RESET & BASE ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f5f7fb;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Layout Fixes (preserved) */
+        #content {
+            width: 100% !important;
+            max-width: 100% !important;
+            padding: 20px !important;
+        }
+        
+        #content-main {
+            width: 100% !important;
+            max-width: 1400px !important;
+            margin: 0 auto !important;
+        }
+
+        /* ============================================ */
+        /* PREMIUM GLASSMORPHISM NAVIGATION BAR (overrides default Django admin header)
+           Original structure unchanged; only nav bar enhanced with luxury aesthetics */
+        /* ============================================ */
+
+        /* Hide default Django header wrapper background and style completely to replace with premium design */
+        #header {
+            background: transparent !important;
+            box-shadow: none !important;
+            border-bottom: none !important;
+            padding: 0 !important;
+        }
+
+        /* Main premium navbar container — glass, blur, soft shadow, modern */
+        .premium-navbar {
+            position: relative;
+            width: 100%;
+            background: rgba(15, 25, 45, 0.75);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            margin-bottom: 30px;
+        }
+
+        /* Inner container for alignment with content width */
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            min-height: 70px;
+        }
+
+        /* Brand / logo area with gradient text & icon */
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            transition: transform 0.2s ease;
+        }
+        .nav-brand:hover {
+            transform: scale(1.02);
+        }
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #a78bfa, #7c3aed);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.3);
+        }
+        .brand-icon i {
+            font-size: 22px;
+            color: white;
+        }
+        .brand-text {
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #ffffff, #c4b5fd);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+        }
+        .brand-sub {
+            font-size: 0.7rem;
+            background: rgba(255,255,240,0.15);
+            padding: 2px 8px;
+            border-radius: 40px;
+            color: #cbd5e1;
+            margin-left: 8px;
+            font-weight: 400;
+        }
+
+        /* Navigation links (left side) + right side user area */
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 18px;
+            border-radius: 40px;
+            color: #f1f5f9;
+            font-weight: 500;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: all 0.25s;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(4px);
+        }
+        .nav-link i {
+            font-size: 1rem;
+            opacity: 0.85;
+        }
+        .nav-link:hover {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        /* special active style for current page simulation via data attribute */
+        .nav-link.active {
+            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+            color: white;
+            box-shadow: 0 6px 14px rgba(109, 40, 217, 0.35);
+        }
+
+        /* Right side: user badge and logout */
+        .nav-userarea {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .user-welcome {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255,255,255,0.08);
+            padding: 5px 16px 5px 16px;
+            border-radius: 60px;
+            backdrop-filter: blur(4px);
+            transition: 0.2s;
+        }
+        .user-greeting {
+            font-weight: 500;
+            color: #eef2ff;
+            font-size: 0.9rem;
+        }
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.2);
+            backdrop-filter: blur(4px);
+            padding: 8px 16px;
+            border-radius: 32px;
+            color: #fee2e2;
+            font-weight: 500;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(255,255,255,0.15);
+            cursor: pointer;
+        }
+        .logout-btn:hover {
+            background: #dc2626;
+            color: white;
+            border-color: transparent;
+            transform: scale(1.02);
+        }
+
+        /* mobile responsiveness */
+        @media (max-width: 900px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 14px;
+                padding: 12px 20px;
+            }
+            .nav-links {
+                justify-content: center;
+            }
+            .nav-userarea {
+                justify-content: center;
+                width: 100%;
+            }
+            .brand-text {
+                font-size: 1.3rem;
+            }
+        }
+        @media (max-width: 550px) {
+            .nav-link {
+                padding: 6px 12px;
+                font-size: 0.75rem;
+            }
+            .user-greeting {
+                font-size: 0.8rem;
+            }
+            .logout-btn {
+                padding: 6px 12px;
+            }
+        }
+
+        /* ========== rest of original styles (ensuring no conflict) ========== */
+        /* Welcome Banner */
+        .admin-welcome {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 24px;
+            padding: 35px 30px;
+            margin-bottom: 35px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 15px 35px -10px rgba(102,126,234,0.4);
+        }
+        
+        .admin-welcome::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+        
+        .admin-welcome h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .admin-welcome p {
+            font-size: 15px;
+            margin: 0;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Stats Grid - 5 Cards (Added Revenue) */
+        .admin-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+        
+        .admin-stat-card {
+            background: white;
+            border-radius: 24px;
+            padding: 0;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        
+        .admin-stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+        
+        .admin-stat-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .admin-stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 40px -12px rgba(0,0,0,0.15);
+        }
+        
+        .admin-stat-inner {
+            padding: 22px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .admin-stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .admin-stat-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            transition: all 0.3s;
+        }
+        
+        .admin-stat-card:hover .admin-stat-icon {
+            transform: scale(1.05) rotate(5deg);
+        }
+        
+        .admin-stat-number {
+            font-size: 36px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 5px;
+        }
+        
+        .admin-stat-label {
+            font-size: 13px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #64748b;
+        }
+        
+        .admin-stat-footer {
+            margin-top: 15px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            font-size: 12px;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* Card Colors */
+        .admin-stat-card.purple .admin-stat-icon { background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; box-shadow: 0 8px 20px rgba(139,92,246,0.3); }
+        .admin-stat-card.purple .admin-stat-number { color: #8b5cf6; }
+        
+        .admin-stat-card.blue .admin-stat-icon { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; box-shadow: 0 8px 20px rgba(59,130,246,0.3); }
+        .admin-stat-card.blue .admin-stat-number { color: #3b82f6; }
+        
+        .admin-stat-card.green .admin-stat-icon { background: linear-gradient(135deg, #10b981, #059669); color: white; box-shadow: 0 8px 20px rgba(16,185,129,0.3); }
+        .admin-stat-card.green .admin-stat-number { color: #10b981; }
+        
+        .admin-stat-card.orange .admin-stat-icon { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; box-shadow: 0 8px 20px rgba(245,158,11,0.3); }
+        .admin-stat-card.orange .admin-stat-number { color: #f59e0b; }
+        
+        .admin-stat-card.teal .admin-stat-icon { background: linear-gradient(135deg, #14b8a6, #0d9488); color: white; box-shadow: 0 8px 20px rgba(20,184,166,0.3); }
+        .admin-stat-card.teal .admin-stat-number { color: #14b8a6; }
+        
+        /* Dashboard Layout - 2 Columns */
+        .dashboard-layout {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+        }
+        
+        .dashboard-left {
+            flex: 2;
+            min-width: 0;
+        }
+        
+        .dashboard-right {
+            flex: 1;
+            min-width: 280px;
+        }
+        
+        /* Modules Styling */
+        .module {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: none;
+            overflow: hidden;
+            margin-bottom: 30px;
+            transition: all 0.3s;
+        }
+        
+        .module:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px -10px rgba(0,0,0,0.1);
+        }
+        
+        .module h2, .module caption {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 18px 25px;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .module table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .module table th {
+            background: #f8fafc;
+            color: #1e293b;
+            font-weight: 600;
+            padding: 14px 20px;
+            border-bottom: 2px solid #e2e8f0;
+            text-align: left;
+        }
+        
+        .module table td {
+            padding: 12px 20px;
+            color: #334155;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .module table tr:hover td {
+            background: #f8fafc;
+        }
+        
+        /* Recent Actions Box */
+        .recent-actions-box {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+        
+        .recent-actions-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px -10px rgba(0,0,0,0.1);
+        }
+        
+        .recent-actions-box h2 {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 18px 25px;
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .recent-actions-box h2 i {
+            margin-right: 8px;
+        }
+        
+        .action-item {
+            padding: 14px 20px;
+            border-bottom: 1px solid #f0f2f5;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: background 0.2s;
+        }
+        
+        .action-item:hover {
+            background: #f8fafc;
+        }
+        
+        .action-icon {
+            width: 32px;
+            color: #667eea;
+            font-size: 16px;
+        }
+        
+        .action-detail {
+            flex: 1;
+        }
+        
+        .action-title {
+            font-weight: 600;
+            font-size: 13px;
+            color: #1e293b;
+        }
+        
+        .action-meta {
+            font-size: 11px;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+        
+        .badge-recent {
+            background: #e0f2fe;
+            color: #0284c7;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 9px;
+            margin-left: 8px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .admin-stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 20px;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .dashboard-layout {
+                flex-direction: column;
+            }
+            .dashboard-right {
+                width: 100%;
+            }
+            .admin-stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .admin-stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .admin-welcome h1 {
+                font-size: 22px;
+            }
+            .module table th, .module table td {
+                padding: 10px 12px;
+                font-size: 12px;
+            }
+        }
+
+        /* make sure django's default admin branding is fully overridden */
+        #branding h1, #site-name {
+            display: none !important;
+        }
+        .login .premium-navbar, .premium-navbar + * {
+            margin-top: 0;
+        }
+        body:not(.dashboard) .premium-navbar {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body class="dashboard">
+    <!-- PREMIUM GLASS NAVIGATION BAR - inserted right after body and before content -->
+    <div class="premium-navbar">
+        <div class="nav-container">
+            <a href="/admin/" class="nav-brand">
+                <div class="brand-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <span class="brand-text">SAIFI'S</span>
+                <span class="brand-sub">Admin</span>
+            </a>
+            <div class="nav-links">
+                <a href="/admin/" class="nav-link active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="/admin/auth/user/" class="nav-link"><i class="fas fa-users"></i> Users</a>
+                <a href="{% url 'all_clients' %}" class="nav-link"><i class="fas fa-building"></i> Clients</a>
+                <a href="{% url 'active_campaigns_list' %}" class="nav-link"><i class="fas fa-bullhorn"></i> Campaigns</a>
+                <a href="{% url 'all_invoices_list' %}" class="nav-link"><i class="fas fa-file-invoice-dollar"></i> Invoices</a>
+                <a href="{% url 'pending_tasks_list' %}" class="nav-link"><i class="fas fa-tasks"></i> Tasks</a>
+            </div>
+            <div class="nav-userarea">
+                <div class="user-welcome">
+                    <div class="user-greeting">
+                        <i class="fas fa-user-circle" style="margin-right: 8px;"></i> {{ user.username|default:"Admin" }}
+                    </div>
+                </div>
+                <form action="{% url 'logout' %}" method="post" style="display: inline; margin: 0;">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-btn" style="background: rgba(239,68,68,0.2); cursor: pointer;">
+                        <i class="fas fa-sign-out-alt"></i> 
+                        <span>Exit</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- original content structure untouched (only navbar added above) -->
+    <div id="container">
+        <div id="content" class="colMS">
+            <div id="content-main">
+                <!-- Welcome Banner -->
+                <div class="admin-welcome">
+                    <h1><i class="fas fa-chart-line"></i> Welcome back, {{ user.username|default:"Admin" }}!</h1>
+                    <p>Here's what's happening with your agency today.</p>
+                </div>
+            
+                <!-- Stats Cards with REAL DATA (5 Cards - Added Revenue) -->
+                <div class="admin-stats-grid">
+                    <a href="{% url 'all_users_list' %}" class="admin-stat-card purple">
+                        <div class="admin-stat-inner">
+                            <div class="admin-stat-header">
+                                <div class="admin-stat-icon"><i class="fas fa-users"></i></div>
+                            </div>
+                            <div class="admin-stat-number">{{ total_users|default:"0" }}</div>
+                            <div class="admin-stat-label">Total Users</div>
+                            <div class="admin-stat-footer">
+                                <i class="fas fa-user-check"></i>
+                                <span>Active accounts</span>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="{% url 'all_clients' %}" class="admin-stat-card blue">
+                        <div class="admin-stat-inner">
+                            <div class="admin-stat-header">
+                                <div class="admin-stat-icon"><i class="fas fa-building"></i></div>
+                            </div>
+                            <div class="admin-stat-number">{{ total_clients|default:"0" }}</div>
+                            <div class="admin-stat-label">Total Clients</div>
+                            <div class="admin-stat-footer">
+                                <i class="fas fa-user-tie"></i>
+                                <span>Active clients</span>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="{% url 'active_campaigns_list' %}" class="admin-stat-card green">
+                        <div class="admin-stat-inner">
+                            <div class="admin-stat-header">
+                                <div class="admin-stat-icon"><i class="fas fa-bullhorn"></i></div>
+                            </div>
+                            <div class="admin-stat-number">{{ active_campaigns|default:"0" }}</div>
+                            <div class="admin-stat-label">Active Campaigns</div>
+                            <div class="admin-stat-footer">
+                                <i class="fas fa-play"></i>
+                                <span>Running campaigns</span>
+                            </div>
+                        </div>
+                    </a>
+                    <div class="admin-stat-card orange">
+                        <div class="admin-stat-inner">
+                            <div class="admin-stat-header">
+                                <div class="admin-stat-icon"><i class="fas fa-tasks"></i></div>
+                            </div>
+                            <div class="admin-stat-number">{{ pending_tasks|default:"0" }}</div>
+                            <div class="admin-stat-label">Pending Tasks</div>
+                            <div class="admin-stat-footer">
+                                <i class="fas fa-clock"></i>
+                                <span>Need attention</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="admin-stat-card teal">
+                        <div class="admin-stat-inner">
+                            <div class="admin-stat-header">
+                                <div class="admin-stat-icon"><i class="fas fa-dollar-sign"></i></div>
+                            </div>
+                            <div class="admin-stat-number">${{ total_revenue|default:"0" }}</div>
+                            <div class="admin-stat-label">Total Revenue</div>
+                            <div class="admin-stat-footer">
+                                <i class="fas fa-chart-line"></i>
+                                <span>From paid invoices</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- 2-COLUMN LAYOUT (exactly original) -->
+                <div class="dashboard-layout">
+                    <!-- LEFT COLUMN: Original Admin Modules -->
+                    <div class="dashboard-left">
+                        <div class="module">
+                            <h2><i class="fas fa-cubes"></i> My Applications</h2>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Application</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Authentication and Authorization</strong> (Users, Groups)</strong></td>
+                                        <td><a href="/admin/auth/user/" class="addlink">Add</a> | <a href="/admin/auth/user/">Change</a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Users Management</strong> (Custom Users)</strong></td>
+                                        <td><a href="{% url 'all_users_list' %}">View List</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Clients</strong></td>
+                                        <td><a href="{% url 'all_clients' %}">Manage</a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Campaigns</strong></td>
+                                        <td><a href="{% url 'active_campaigns_list' %}">Active Campaigns</a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Invoices</strong></strong></td>
+                                        <td><a href="{% url 'all_invoices_list' %}">View All</a> | <a href="{% url 'invoice_add' %}" class="addlink">Add</a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Tasks & Activities</strong></td>
+                                        <td><a href="{% url 'pending_tasks_list' %}">View tasks</a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></a></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- RIGHT COLUMN: Recent Actions -->
+                    <div class="dashboard-right">
+                        <div class="recent-actions-box">
+                            <h2><i class="fas fa-history"></i> Recent Actions</h2>
+                            <div>
+                                {% for user in recent_users %}
+                                <div class="action-item">
+                                    <div class="action-icon"><i class="fas fa-user-plus"></i></div>
+                                    <div class="action-detail">
+                                        <div class="action-title">Added user: {{ user.username }}</div>
+                                        <div class="action-meta">{{ user.date_joined|timesince }} ago</div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                                
+                                {% for client in recent_clients %}
+                                <div class="action-item">
+                                    <div class="action-icon"><i class="fas fa-building"></i></div>
+                                    <div class="action-detail">
+                                        <div class="action-title">Added client: {{ client.name }}</div>
+                                        <div class="action-meta">{{ client.created_at|timesince }} ago</div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                                
+                                {% for campaign in recent_campaigns %}
+                                <div class="action-item">
+                                    <div class="action-icon"><i class="fas fa-bullhorn"></i></div>
+                                    <div class="action-detail">
+                                        <div class="action-title">Added campaign: {{ campaign.name }}</div>
+                                        <div class="action-meta">{{ campaign.created_at|timesince }} ago</div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                                
+                                {% for task in recent_tasks %}
+                                <div class="action-item">
+                                    <div class="action-icon"><i class="fas fa-tasks"></i></div>
+                                    <div class="action-detail">
+                                        <div class="action-title">Added task: {{ task.title }}</div>
+                                        <div class="action-meta">{{ task.created_at|timesince }} ago</div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                                
+                                {% for invoice in recent_invoices %}
+                                <div class="action-item">
+                                    <div class="action-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+                                    <div class="action-detail">
+                                        <div class="action-title">Added invoice: {{ invoice.invoice_number }}</div>
+                                        <div class="action-meta">{{ invoice.created_at|timesince }} ago</div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                                
+                                {% if not recent_users and not recent_clients and not recent_campaigns and not recent_tasks and not recent_invoices %}
+                                <div class="action-item">
+                                    <div class="action-icon"><i class="fas fa-inbox"></i></div>
+                                    <div class="action-detail">
+                                        <div class="action-title">No recent actions</div>
+                                        <div class="action-meta">Start by adding some data</div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- No further changes: original footer or extra divs remain untouched -->
+</body>
+</html>
