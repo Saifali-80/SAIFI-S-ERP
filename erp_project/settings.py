@@ -86,3 +86,5 @@ LOGIN_REDIRECT_URL = '/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 ADMIN_INDEX_TEMPLATE = 'admin/index.html'
+
+SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
