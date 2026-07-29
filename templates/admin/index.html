@@ -15,6 +15,11 @@
             box-sizing: border-box;
         }
 
+        html { font-size: 16px; }
+        @media (max-width: 768px) { html { font-size: 15px; } }
+        @media (max-width: 576px) { html { font-size: 14px; } }
+        @media (max-width: 400px) { html { font-size: 13px; } }
+
         body {
             background: #f5f7fb;
             font-family: 'Inter', sans-serif;
@@ -535,19 +540,49 @@
             .admin-stats-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
+            .admin-welcome { padding: 28px 24px; }
+            .admin-welcome h1 { font-size: 1.5rem; }
+            .admin-welcome p { font-size: 0.85rem; }
         }
         
         @media (max-width: 768px) {
             .admin-stats-grid {
                 grid-template-columns: 1fr;
+                gap: 15px;
             }
             .admin-welcome h1 {
-                font-size: 22px;
+                font-size: 1.4rem;
             }
+            .admin-welcome p { font-size: 0.8rem; }
             .module table th, .module table td {
                 padding: 10px 12px;
-                font-size: 12px;
+                font-size: 0.75rem;
             }
+            .recent-actions { padding: 12px; }
+            .recent-actions h2 { font-size: 1.1rem; }
+            #content { padding: 15px !important; }
+        }
+
+        @media (max-width: 576px) {
+            .admin-welcome { padding: 22px 18px; border-radius: 18px; }
+            .admin-welcome h1 { font-size: 1.2rem; }
+            .admin-welcome p { font-size: 0.75rem; }
+            .admin-stats-grid { gap: 12px; }
+            .stat-card-inner { padding: 16px; }
+            .stat-number { font-size: 1.8rem; }
+            .stat-label { font-size: 0.7rem; }
+            .dashboard-right { padding: 0; }
+            .module { margin-bottom: 15px; }
+            .module table th, .module table td { padding: 8px 10px; font-size: 0.7rem; }
+            #content { padding: 12px !important; }
+        }
+
+        @media (max-width: 400px) {
+            .admin-welcome { padding: 18px 14px; border-radius: 16px; }
+            .admin-welcome h1 { font-size: 1rem; }
+            .stat-number { font-size: 1.5rem; }
+            .module table th, .module table td { padding: 6px 8px; font-size: 0.65rem; }
+            #content { padding: 10px !important; }
         }
 
         /* make sure django's default admin branding is fully overridden */

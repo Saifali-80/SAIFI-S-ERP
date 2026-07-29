@@ -13,6 +13,11 @@
             box-sizing: border-box;
         }
 
+        html { font-size: 16px; }
+        @media (max-width: 768px) { html { font-size: 15px; } }
+        @media (max-width: 576px) { html { font-size: 14px; } }
+        @media (max-width: 400px) { html { font-size: 13px; } }
+
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #f5f7fb 0%, #eef2f8 100%);
@@ -55,7 +60,7 @@
 
         .sidebar-header h2 {
             color: white;
-            font-size: 24px;
+            font-size: 1.5rem;
             font-weight: 700;
             letter-spacing: -0.5px;
             background: linear-gradient(135deg, #ffffff, #a78bfa);
@@ -68,7 +73,7 @@
             background: linear-gradient(135deg, #667eea, #764ba2);
             padding: 3px 10px;
             border-radius: 12px;
-            font-size: 11px;
+            font-size: 0.7rem;
             margin-left: 8px;
             color: white;
             background-clip: unset;
@@ -604,26 +609,73 @@
 
         /* ========== RESPONSIVE ========== */
         @media (max-width: 1200px) {
-            .stats-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
+            .sidebar { width: 260px; }
+            .main-content { margin-left: 260px; }
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 200;
+            background: linear-gradient(135deg, #0f172a, #1a1f35);
+            color: white;
+            border: none;
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            font-size: 22px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-toggle:hover {
+            transform: scale(1.05);
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 99;
+            backdrop-filter: blur(4px);
         }
 
         @media (max-width: 992px) {
+            .menu-toggle {
+                display: flex;
+            }
+            .sidebar-overlay.active {
+                display: block;
+            }
             .sidebar {
+                width: 280px;
                 transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
             }
             .main-content {
                 margin-left: 0;
                 padding: 20px;
             }
             .stats-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
                 gap: 18px;
             }
         }
 
         @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
             .users-grid {
                 grid-template-columns: 1fr;
             }
@@ -638,12 +690,68 @@
             }
             .tasks-table th, .tasks-table td {
                 padding: 12px 15px;
-                font-size: 12px;
+                font-size: 0.75rem;
             }
+            .page-title h1 { font-size: 1.5rem; }
+            .stat-number { font-size: 2rem; }
+            .main-content { padding: 15px; }
+        }
+
+        @media (max-width: 576px) {
+            .main-content { padding: 12px; }
+            .top-bar { padding: 14px 18px; border-radius: 20px; }
+            .page-title h1 { font-size: 1.3rem; }
+            .page-title p { font-size: 0.8rem; }
+            .stat-number { font-size: 1.75rem; }
+            .stat-label { font-size: 0.7rem; }
+            .stat-inner { padding: 18px 16px; }
+            .stat-icon { width: 52px; height: 52px; font-size: 22px; }
+            .stats-grid { gap: 12px; }
+            .users-grid { padding: 18px; gap: 15px; }
+            .user-card { padding: 20px; }
+            .user-name { font-size: 1.1rem; }
+            .user-email { font-size: 0.7rem; }
+            .task-stat-number { font-size: 1.3rem; }
+            .task-stat-label { font-size: 0.6rem; }
+            .total-tasks { font-size: 0.75rem; }
+            .card-header { padding: 18px 20px; }
+            .card-header h2 { font-size: 1.1rem; }
+            .tasks-table th { padding: 12px 14px; font-size: 0.7rem; }
+            .tasks-table td { padding: 12px 14px; font-size: 0.8rem; }
+            .sidebar-header h2 { font-size: 1.3rem; }
+            .sidebar-header { padding: 24px 20px; }
+            .nav-item { padding: 10px 18px; margin: 4px 12px; font-size: 0.85rem; }
+            .nav-item i { font-size: 16px; width: 20px; }
+            .badge { font-size: 0.7rem; padding: 4px 10px; }
+        }
+
+        @media (max-width: 400px) {
+            .main-content { padding: 10px; }
+            .top-bar { padding: 12px 14px; border-radius: 16px; }
+            .page-title h1 { font-size: 1.1rem; }
+            .stat-number { font-size: 1.5rem; }
+            .users-grid { padding: 14px; gap: 12px; }
+            .user-card { padding: 16px; }
+            .user-name { font-size: 1rem; }
+            .user-avatar { width: 60px; height: 60px; font-size: 24px; }
+            .task-stats { padding: 12px 0; }
+            .task-stat-number { font-size: 1.1rem; }
+            .card-header { padding: 14px 16px; }
+            .card-header h2 { font-size: 1rem; }
+            .tasks-table th { padding: 10px 10px; font-size: 0.65rem; }
+            .tasks-table td { padding: 10px 10px; font-size: 0.7rem; }
+            .sidebar-header h2 { font-size: 1.1rem; }
+            .sidebar-header { padding: 20px 16px; }
+            .nav-item { padding: 8px 14px; margin: 3px 10px; font-size: 0.8rem; }
+            .nav-item i { font-size: 14px; width: 18px; }
         }
     </style>
 </head>
 <body>
+    <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
@@ -820,5 +928,11 @@
         </div>
         {% endif %}
     </div>
+<script>
+    function toggleSidebar() {
+        document.querySelector('.sidebar').classList.toggle('open');
+        document.querySelector('.sidebar-overlay').classList.toggle('active');
+    }
+</script>
 </body>
 </html>

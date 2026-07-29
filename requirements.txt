@@ -2,9 +2,11 @@ Django==6.0.5
 django-admin-interface==0.32.0
 django-colorfield==0.14.0
 gunicorn
-whitenoise
+whitenoise[brotli]
 pillow
 python-dotenv
 requests
 sqlparse
 tzdata
+dj-database-url==2.2.0
+psycopg2-binary==2.9.9

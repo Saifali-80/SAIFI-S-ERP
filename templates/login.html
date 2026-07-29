@@ -13,6 +13,11 @@
             box-sizing: border-box;
         }
 
+        html { font-size: 16px; }
+        @media (max-width: 768px) { html { font-size: 15px; } }
+        @media (max-width: 576px) { html { font-size: 14px; } }
+        @media (max-width: 400px) { html { font-size: 13px; } }
+
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
@@ -431,26 +436,56 @@
         }
 
         /* Responsive */
+        @media (max-width: 768px) {
+            .welcome-text h2 { font-size: 1.5rem; }
+            .brand h1 { font-size: 1.8rem; }
+            .brand p { font-size: 0.8rem; }
+            .login-container { max-width: 420px; }
+        }
+        @media (max-width: 640px) {
+            .login-card { padding: 35px 28px; border-radius: 28px; }
+            .welcome-text h2 { font-size: 1.4rem; }
+            .brand h1 { font-size: 1.6rem; }
+        }
         @media (max-width: 480px) {
             .login-card {
-                padding: 32px 24px;
+                padding: 28px 20px;
+                border-radius: 24px;
             }
             .welcome-text h2 {
-                font-size: 24px;
+                font-size: 1.3rem;
             }
             .brand h1 {
-                font-size: 26px;
+                font-size: 1.4rem;
             }
             .brand-icon {
-                width: 65px;
-                height: 65px;
+                width: 60px;
+                height: 60px;
             }
             .brand-icon i {
-                font-size: 28px;
+                font-size: 26px;
             }
+            .input-field input { padding: 12px 14px 12px 42px; font-size: 0.85rem; }
+            .input-field i { font-size: 16px; left: 14px; }
+            .login-btn { padding: 12px; font-size: 0.9rem; }
             .orb-1, .orb-2, .orb-3 {
                 display: none;
             }
+        }
+        @media (max-width: 400px) {
+            .login-card { padding: 24px 16px; border-radius: 20px; }
+            .welcome-text h2 { font-size: 1.1rem; }
+            .brand h1 { font-size: 1.2rem; }
+            .brand-icon { width: 50px; height: 50px; }
+            .brand-icon i { font-size: 22px; }
+            .input-group { margin-bottom: 16px; }
+            .input-label { font-size: 0.75rem; }
+            .input-field input { padding: 10px 12px 10px 38px; font-size: 0.8rem; border-radius: 14px; }
+            .input-field i { font-size: 14px; left: 12px; }
+            .login-btn { padding: 10px; font-size: 0.8rem; border-radius: 14px; }
+            .demo-credentials { padding: 10px; }
+            .demo-credentials code { font-size: 0.65rem; padding: 3px 8px; }
+            .footer-links a { font-size: 0.75rem; }
         }
 
         /* Loading Animation for Button */
