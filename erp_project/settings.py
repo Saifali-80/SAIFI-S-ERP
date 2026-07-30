@@ -56,7 +56,7 @@ WSGI_APPLICATION = 'erp_project.wsgi.application'
 
 # Database - PostgreSQL for Vercel, SQLite for local dev
 DATABASE_URL = os.environ.get('DATABASE_URL')
-VERCEL = os.environ.get('VERCEL', '').lower() == 'true'
+VERCEL = os.environ.get('VERCEL', '').lower() in ('1', 'true', 'yes')
 if DATABASE_URL:
     import dj_database_url
     db_config = dj_database_url.config(default=DATABASE_URL, conn_max_age=0)
@@ -66,13 +66,10 @@ if DATABASE_URL:
         db_config['OPTIONS']['sslmode'] = 'require'
     DATABASES = {'default': db_config}
 elif VERCEL:
-    # Vercel without DATABASE_URL - use /tmp SQLite (ephemeral, migrations run at build)
-    import sqlite3
-    _db_path = '/tmp/db.sqlite3'
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': _db_path,
+            'NAME': '/tmp/db.sqlite3',
         }
     }
 else:
