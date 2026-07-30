@@ -10,53 +10,48 @@ from tasks.models import Task
 from invoicing.models import Invoice
 import dash.views as dash_views
 
-# ========== CUSTOM ADMIN DASHBOARD FUNCTION ==========
-def custom_admin_dashboard(request):
-    # REAL DATA COUNTS FROM DATABASE
-    total_users = User.objects.count()
-    total_clients = Client.objects.count()
-    active_campaigns = Campaign.objects.filter(status='active').count()
-    pending_tasks = Task.objects.filter(status='pending').count()
-    total_revenue = Invoice.objects.filter(status='paid').aggregate(total=models.Sum('total_amount'))['total'] or 0
-    
-    # Recent items for recent actions sidebar
-    recent_users = User.objects.all().order_by('-date_joined')[:5]
-    recent_clients = Client.objects.all().order_by('-created_at')[:5]
-    recent_campaigns = Campaign.objects.all().order_by('-created_at')[:5]
-    recent_tasks = Task.objects.all().order_by('-created_at')[:5]
-    recent_invoices = Invoice.objects.all().order_by('-created_at')[:5]
-    
-    # PRINT FOR DEBUG - Check terminal
-    print("=" * 50)
-    print("ADMIN DASHBOARD - REAL DATA:")
-    print(f"Total Users: {total_users}")
-    print(f"Total Clients: {total_clients}")
-    print(f"Active Campaigns: {active_campaigns}")
-    print(f"Pending Tasks: {pending_tasks}")
-    print("=" * 50)
-    
-    context = {
-        'total_users': total_users,
-        'total_clients': total_clients,
-        'active_campaigns': active_campaigns,
-        'pending_tasks': pending_tasks,
-        'total_revenue': total_revenue,
-        'recent_users': recent_users,
-        'recent_clients': recent_clients,
-        'recent_campaigns': recent_campaigns,
-        'recent_tasks': recent_tasks,
-        'recent_invoices': recent_invoices,
-        'user': request.user,
-    }
-    return render(request, 'admin/index.html', context)
+# ========== CUSTOM ADMIN SITE ==========
+class CustomAdminSite(admin.AdminSite):
+    site_header = "SAIFI'S ERP Admin Panel"
+    site_title = "SAIFI'S ERP"
+    index_title = "Dashboard"
+    index_template = "admin/index.html"
 
-# ========== CONFIGURE ADMIN SITE ==========
-admin.site.site_header = 'SAIFI\'S ERP Admin Panel'
-admin.site.site_title = 'SAIFI\'S ERP'
-admin.site.index_title = 'Dashboard'
+    def index(self, request, extra_context=None):
+        # REAL DATA COUNTS FROM DATABASE
+        total_users = User.objects.count()
+        total_clients = Client.objects.count()
+        active_campaigns = Campaign.objects.filter(status='active').count()
+        pending_tasks = Task.objects.filter(status='pending').count()
+        total_revenue = Invoice.objects.filter(status='paid').aggregate(total=models.Sum('total_amount'))['total'] or 0
 
-# IMPORTANT: Override admin index view with custom function
-admin.site.index_view = custom_admin_dashboard
+        # Recent items for recent actions sidebar
+        recent_users = User.objects.all().order_by('-date_joined')[:5]
+        recent_clients = Client.objects.all().order_by('-created_at')[:5]
+        recent_campaigns = Campaign.objects.all().order_by('-created_at')[:5]
+        recent_tasks = Task.objects.all().order_by('-created_at')[:5]
+        recent_invoices = Invoice.objects.all().order_by('-created_at')[:5]
+
+        context = {
+            'total_users': total_users,
+            'total_clients': total_clients,
+            'active_campaigns': active_campaigns,
+            'pending_tasks': pending_tasks,
+            'total_revenue': total_revenue,
+            'recent_users': recent_users,
+            'recent_clients': recent_clients,
+            'recent_campaigns': recent_campaigns,
+            'recent_tasks': recent_tasks,
+            'recent_invoices': recent_invoices,
+            'user': request.user,
+        }
+        if extra_context:
+            context.update(extra_context)
+        return super().index(request, extra_context=context)
+
+# Use custom admin site
+admin.site = CustomAdminSite()
+admin.autodiscover()
 
 # ========== URL PATTERNS ==========
 urlpatterns = [

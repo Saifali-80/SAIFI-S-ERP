@@ -59,9 +59,9 @@ DATABASE_URL = os.environ.get('DATABASE_URL')
 VERCEL = os.environ.get('VERCEL', '').lower() == 'true'
 if DATABASE_URL:
     import dj_database_url
-    DATABASES = {
-        'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=600)
-    }
+    db_config = dj_database_url.config(default=DATABASE_URL, conn_max_age=0)
+    db_config['OPTIONS'] = {'sslmode': 'require'}
+    DATABASES = {'default': db_config}
 elif VERCEL:
     DATABASES = {
         'default': {
@@ -108,5 +108,10 @@ LOGIN_REDIRECT_URL = '/'
 ADMIN_INDEX_TEMPLATE = 'admin/index.html'
 
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
+SESSION_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_AGE = 86400
+SESSION_SAVE_EVERY_REQUEST = True
 
 CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', 'https://saifi-s-erp.vercel.app,https://*.vercel.app').split(',')
