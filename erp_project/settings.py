@@ -60,13 +60,19 @@ VERCEL = os.environ.get('VERCEL', '').lower() == 'true'
 if DATABASE_URL:
     import dj_database_url
     db_config = dj_database_url.config(default=DATABASE_URL, conn_max_age=0)
-    db_config['OPTIONS'] = {'sslmode': 'require'}
+    # Ensure SSL is enabled for PostgreSQL on Vercel serverless
+    if 'sslmode' not in db_config.get('OPTIONS', {}):
+        db_config.setdefault('OPTIONS', {})
+        db_config['OPTIONS']['sslmode'] = 'require'
     DATABASES = {'default': db_config}
 elif VERCEL:
+    # Vercel without DATABASE_URL - use /tmp SQLite (ephemeral, migrations run at build)
+    import sqlite3
+    _db_path = '/tmp/db.sqlite3'
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': '/tmp/db.sqlite3',
+            'NAME': _db_path,
         }
     }
 else:
